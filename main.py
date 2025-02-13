@@ -1,33 +1,42 @@
-import requests
+import os
+from pydantic import BaseModel, Field
+from typing import List
+from groq import Groq
+import instructor
 
-# API Configuration
-API_KEY = "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"
-API_URL = "https://api.groq.com/openai/v1/chat/completions"
-HEADERS = {
-    "Authorization": f"Bearer {API_KEY}",
-    "Content-Type": "application/json"
-}
+class Character(BaseModel):
+    name: str
+    fact: List[str] = Field(..., description="A list of facts about the subject")
 
-def ask_groq(question):
-    """Send a question to the Groq API and return the response."""
-    data = {
-        "model": "groq-llama3-8b",
-        "messages": [{"role": "user", "content": question}]
-    }
-    response = requests.post(API_URL, json=data, headers=HEADERS)
-    
-    return (
-        response.json()["choices"][0]["message"]["content"]
-        if response.status_code == 200
-        else f"Error: {response.status_code}, {response.text}"
-    )
+def get_user_input():
+    return input("\nEnter a question (or 'quit' to exit): ")
 
-def main():
-    """Loop for user interaction until 'quit' is entered."""
-    print("Welcome to the Groq chatbot! Type 'quit' to exit.")
-    while (user_input := input("You: ")) != "quit":
-        print("Groq:", ask_groq(user_input))
-    print("Goodbye!")
+def run(question):
+    api_key = "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"
+
+    client = Groq(api_key=api_key)
+    client_with_tools = instructor.from_groq(client, mode=instructor.Mode.TOOLS)
+
+    try:
+        resp = client_with_tools.chat.completions.create(
+            model="mixtral-8x7b-32768",
+            messages=[{"role": "user", "content": question}],
+            response_model=Character
+        )
+
+        # ✅ Print output in a clean format
+        print(f"\n📝 Topic: {resp.name}\n")
+        for i, fact in enumerate(resp.fact, start=1):
+            print(f"🔹 {fact}")
+
+    except Exception as e:
+        print(f"❌ API Request Failed: {e}")
 
 if __name__ == "__main__":
-    main()
+    while True:
+        user_input = get_user_input()
+        if user_input.lower() == 'quit':
+            print("\n👋Have a great day!")
+            break
+        run(user_input)
+
