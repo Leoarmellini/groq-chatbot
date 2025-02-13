@@ -1,7 +1,7 @@
 import requests
 
 # API Configuration
-API_KEY = "your_api_key_here"
+API_KEY = "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"
 API_URL = "https://api.groq.com/openai/v1/chat/completions"
 HEADERS = {
     "Authorization": f"Bearer {API_KEY}",
