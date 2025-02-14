@@ -24,7 +24,6 @@ def run(question):
             response_model=Character
         )
 
-        # ✅ Print output in a clean format
         print(f"\n📝 Topic: {resp.name}\n")
         for i, fact in enumerate(resp.fact, start=1):
             print(f"🔹 {fact}")
