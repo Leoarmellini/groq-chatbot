@@ -12,7 +12,7 @@ def get_user_input():
     return input("\nEnter a topic: ")
 
 def run(question):
-    api_key = "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"
+    api_key = ""
 
     client = Groq(api_key=api_key)
     client_with_tools = instructor.from_groq(client, mode=instructor.Mode.TOOLS)
