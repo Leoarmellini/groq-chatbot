@@ -9,7 +9,7 @@ class Character(BaseModel):
     fact: List[str] = Field(..., description="A list of facts about the subject")
 
 def get_user_input():
-    return input("\nEnter a question (or 'quit' to exit): ")
+    return input("\nEnter a topic: ")
 
 def run(question):
     api_key = "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"
